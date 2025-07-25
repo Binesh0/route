@@ -1,0 +1,197 @@
+{
+  "metadata": {
+    "map_name": "turtlebot_simulation_map",
+    "coordinate_system": "map_frame",
+    "units": "meters",
+    "created_date": "2024-01-01",
+    "description": "Sample navigation graph for TurtleBot simulation"
+  },
+  "nodes": [
+    {
+      "id": "start",
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0,
+      "type": "waypoint",
+      "description": "Starting position"
+    },
+    {
+      "id": "A",
+      "x": 2.0,
+      "y": 0.0,
+      "z": 0.0,
+      "type": "waypoint",
+      "description": "Waypoint A"
+    },
+    {
+      "id": "B",
+      "x": 4.0,
+      "y": 0.0,
+      "z": 0.0,
+      "type": "waypoint",
+      "description": "Waypoint B"
+    },
+    {
+      "id": "C",
+      "x": 4.0,
+      "y": 2.0,
+      "z": 0.0,
+      "type": "intersection",
+      "description": "Intersection C"
+    },
+    {
+      "id": "D",
+      "x": 4.0,
+      "y": 4.0,
+      "z": 0.0,
+      "type": "waypoint",
+      "description": "Waypoint D"
+    },
+    {
+      "id": "E",
+      "x": 2.0,
+      "y": 4.0,
+      "z": 0.0,
+      "type": "waypoint",
+      "description": "Waypoint E"
+    },
+    {
+      "id": "F",
+      "x": 0.0,
+      "y": 4.0,
+      "z": 0.0,
+      "type": "waypoint",
+      "description": "Waypoint F"
+    },
+    {
+      "id": "G",
+      "x": 0.0,
+      "y": 2.0,
+      "z": 0.0,
+      "type": "intersection",
+      "description": "Intersection G"
+    },
+    {
+      "id": "center",
+      "x": 2.0,
+      "y": 2.0,
+      "z": 0.0,
+      "type": "intersection",
+      "description": "Central hub"
+    }
+  ],
+  "edges": [
+    {
+      "from": "start",
+      "to": "A",
+      "weight": 2.0,
+      "bidirectional": true,
+      "type": "corridor",
+      "description": "Main corridor from start to A"
+    },
+    {
+      "from": "A",
+      "to": "B",
+      "weight": 2.0,
+      "bidirectional": true,
+      "type": "corridor",
+      "description": "East corridor A to B"
+    },
+    {
+      "from": "B",
+      "to": "C",
+      "weight": 2.0,
+      "bidirectional": true,
+      "type": "corridor",
+      "description": "North corridor B to C"
+    },
+    {
+      "from": "C",
+      "to": "D",
+      "weight": 2.0,
+      "bidirectional": true,
+      "type": "corridor",
+      "description": "North corridor C to D"
+    },
+    {
+      "from": "D",
+      "to": "E",
+      "weight": 2.0,
+      "bidirectional": true,
+      "type": "corridor",
+      "description": "West corridor D to E"
+    },
+    {
+      "from": "E",
+      "to": "F",
+      "weight": 2.0,
+      "bidirectional": true,
+      "type": "corridor",
+      "description": "West corridor E to F"
+    },
+    {
+      "from": "F",
+      "to": "G",
+      "weight": 2.0,
+      "bidirectional": true,
+      "type": "corridor",
+      "description": "South corridor F to G"
+    },
+    {
+      "from": "G",
+      "to": "start",
+      "weight": 2.0,
+      "bidirectional": true,
+      "type": "corridor",
+      "description": "South corridor G to start"
+    },
+    {
+      "from": "A",
+      "to": "center",
+      "weight": 2.0,
+      "bidirectional": true,
+      "type": "shortcut",
+      "description": "Shortcut A to center"
+    },
+    {
+      "from": "center",
+      "to": "C",
+      "weight": 2.0,
+      "bidirectional": true,
+      "type": "shortcut",
+      "description": "Shortcut center to C"
+    },
+    {
+      "from": "center",
+      "to": "E",
+      "weight": 2.0,
+      "bidirectional": true,
+      "type": "shortcut",
+      "description": "Shortcut center to E"
+    },
+    {
+      "from": "G",
+      "to": "center",
+      "weight": 2.0,
+      "bidirectional": true,
+      "type": "shortcut",
+      "description": "Shortcut G to center"
+    },
+    {
+      "from": "start",
+      "to": "center",
+      "weight": 2.83,
+      "bidirectional": true,
+      "type": "diagonal",
+      "description": "Diagonal path start to center"
+    }
+  ],
+  "regions": [
+    {
+      "id": "main_area",
+      "type": "navigation_zone",
+      "nodes": ["start", "A", "B", "C", "D", "E", "F", "G", "center"],
+      "description": "Main navigation area"
+    }
+  ]
+}
