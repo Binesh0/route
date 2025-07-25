@@ -1,52 +1,123 @@
-# AMR Fleet Adapter
+# AMR Fleet Adapter with Delivery Capabilities
 
-A comprehensive AMR (Autonomous Mobile Robot) Fleet Adapter for ROS2 Humble using RMF (Robot Middleware Framework) with TurtleBot integration and Nav2 navigation.
+A comprehensive Python-based AMR (Autonomous Mobile Robot) Fleet Adapter for ROS2 Humble using RMF (Robot Middleware Framework) with TurtleBot integration, Nav2 navigation, and advanced delivery management capabilities.
 
 ## Features
 
+### 🚚 **Advanced Delivery Management**
+- **Complete Delivery Lifecycle**: From order creation to delivery completion
+- **Multiple Cargo Types**: Packages, documents, food, medicine, equipment, fragile items
+- **Priority-based Scheduling**: Emergency, urgent, high, normal, and low priority deliveries
+- **Customer Management**: Contact information, special requirements, delivery preferences
+- **Proof of Delivery**: Signature and photo verification support
+- **Real-time Tracking**: Live delivery status updates and progress monitoring
+
+### 🤖 **Fleet Coordination**
 - **RMF Integration**: Full integration with Robot Middleware Framework for multi-robot coordination
 - **TurtleBot Support**: Optimized for TurtleBot robots with Nav2 navigation stack
+- **Intelligent Task Assignment**: Automatic robot selection based on proximity and capabilities
+- **Load Balancing**: Distribute deliveries across available robots efficiently
+- **Emergency Management**: Fleet-wide emergency stop and resume capabilities
+
+### 🗺️ **Navigation & Mapping**
 - **JSON Route Management**: Flexible route definition using JSON format
 - **PGM Map Support**: Load and use PGM maps for navigation
-- **Fleet Management**: Multi-robot fleet coordination and task assignment
+- **Waypoint Navigation**: Predefined waypoints with automatic path planning
+- **Dynamic Route Optimization**: Adjust routes based on real-time conditions
+- **Obstacle Avoidance**: Integrated Nav2 navigation with collision avoidance
+
+### 📊 **Monitoring & Analytics**
 - **Real-time State Monitoring**: Robot position, battery, and navigation status tracking
-- **Task Execution**: Support for delivery, patrol, and custom tasks
+- **Delivery Analytics**: Success rates, average delivery times, efficiency metrics
+- **Fleet Performance**: Robot utilization, distance traveled, task completion rates
+- **Live Dashboard**: Real-time fleet status and delivery progress visualization
 
 ## Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│  AMR Fleet      │    │  Route Manager  │    │  TurtleBot      │
-│  Adapter        │◄──►│                 │◄──►│  Robot          │
-│                 │    │                 │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         ▲                       ▲                       ▲
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│     RMF         │    │   JSON Routes   │    │     Nav2        │
-│   Traffic       │    │   PGM Maps      │    │   Navigation    │
-│   Manager       │    │                 │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                    AMR Fleet Adapter (Main)                    │
+│  - Fleet coordination and task management                      │
+│  - RMF integration and robot discovery                        │
+│  - Auto-assignment and load balancing                         │
+└─────────────────┬───────────────────┬───────────────────────────┘
+                  │                   │
+        ┌─────────▼─────────┐  ┌──────▼──────┐
+        │ Delivery Manager  │  │Route Manager│
+        │ - Task lifecycle  │  │- Map loading│
+        │ - Priority queue  │  │- Waypoints  │
+        │ - Customer mgmt   │  │- Navigation │
+        └─────────┬─────────┘  └──────┬──────┘
+                  │                   │
+                  │    ┌──────────────▼──────────────┐
+                  │    │        TurtleBot Robot      │
+                  │    │     Controllers (N bots)    │
+                  │    │ - Navigation & cargo mgmt   │
+                  │    │ - State monitoring          │
+                  └────┤ - Safety & performance      │
+                       └─────────────────────────────┘
+                                     │
+                       ┌─────────────▼─────────────┐
+                       │        Nav2 Stack         │
+                       │   Navigation & Planning   │
+                       └───────────────────────────┘
 ```
+
+The AMR Fleet Adapter consists of four main Python modules working together:
+
+### 1. AMRFleetAdapter (Main Coordinator)
+- **Fleet Management**: Central coordination of all robots and delivery operations
+- **RMF Integration**: Interfaces with Robot Middleware Framework for task scheduling
+- **Auto-assignment**: Intelligent task distribution based on robot capabilities and proximity
+- **Configuration Management**: Loads and manages fleet parameters from YAML files
+
+### 2. DeliveryManager (Delivery Operations)
+- **Task Lifecycle**: Manages complete delivery process from creation to completion
+- **Priority Queue**: Handles urgent, high, normal, and low priority deliveries
+- **Customer Management**: Tracks customer information and special requirements
+- **Status Tracking**: Real-time delivery progress monitoring and updates
+- **Analytics**: Performance metrics and delivery statistics
+
+### 3. TurtleBotController (Robot Control)
+- **Navigation Control**: Nav2 integration for autonomous navigation
+- **Cargo Handling**: Simulated loading/unloading operations with weight tracking
+- **State Management**: Real-time robot status, battery, and position monitoring
+- **Safety Features**: Emergency stop, collision avoidance, error recovery
+- **Performance Tracking**: Distance traveled, deliveries completed, efficiency metrics
+
+### 4. RouteManager (Navigation & Mapping)
+- **Map Management**: Loads PGM maps and converts to ROS2 OccupancyGrid
+- **Route Planning**: JSON-based waypoint and route management
+- **Coordinate Conversion**: World-to-map coordinate transformations
+- **Path Validation**: Ensures route connectivity and accessibility
 
 ## Dependencies
 
 ### Required ROS2 Packages
-- `rmf_fleet_adapter`
-- `rmf_traffic`
-- `rmf_traffic_ros2`
-- `rmf_utils`
-- `nav2_msgs`
-- `nav2_util`
-- `geometry_msgs`
-- `nav_msgs`
-- `tf2_ros`
+- `rmf_fleet_adapter_python` - Python RMF fleet adapter integration
+- `rmf_fleet_adapter` - Core RMF fleet adapter functionality
+- `rmf_traffic` - RMF traffic management
+- `rmf_traffic_ros2` - RMF traffic ROS2 integration
+- `rmf_task_msgs` - RMF task message definitions
+- `rmf_fleet_msgs` - RMF fleet message definitions
+- `nav2_msgs` - Nav2 navigation messages
+- `nav2_simple_commander` - Simplified Nav2 Python API
+- `rclpy` - ROS2 Python client library
+- `std_msgs` - Standard ROS2 messages
+- `geometry_msgs` - Geometry-related messages
+- `nav_msgs` - Navigation messages
+- `tf2_ros` - Transform library for ROS2
+- `tf2_geometry_msgs` - TF2 geometry message support
 
-### System Dependencies
-- `nlohmann-json-dev`
-- `yaml-cpp`
-- `opencv2`
+### Python Dependencies
+- `python3-yaml` - YAML configuration file parsing
+- `python3-numpy` - Numerical computations
+- `python3-opencv` - Image processing for PGM map loading
+- `dataclasses` - Python dataclass support (Python 3.7+)
+- `typing` - Type hints support
+- `datetime` - Date and time handling
+- `json` - JSON data processing
+- `math` - Mathematical functions
 
 ## Installation
 
@@ -134,23 +205,97 @@ Define waypoints and routes in `config/routes.json`:
 
 ## Usage
 
-### Basic Launch
+### 🚀 Quick Start
 
-Launch the AMR fleet adapter with default configuration:
+1. **Launch the Fleet Adapter**
+   ```bash
+   # Basic launch with default configuration
+   ros2 launch amr_fleet_adapter amr_fleet_adapter.launch.py
+   
+   # Launch with custom fleet settings
+   ros2 launch amr_fleet_adapter amr_fleet_adapter.launch.py \
+       fleet_name:=delivery_fleet \
+       robot_names:='["turtlebot1", "turtlebot2"]' \
+       max_concurrent_deliveries:=5 \
+       auto_assign_tasks:=true
+   ```
 
+2. **Send a Delivery Request**
+   ```bash
+   # Run the example client
+   ros2 run amr_fleet_adapter delivery_client_example.py
+   ```
+
+3. **Monitor Fleet Status**
+   ```bash
+   # Watch fleet state updates
+   ros2 topic echo /fleet_state
+   
+   # Monitor delivery metrics
+   ros2 topic echo /delivery_metrics
+   ```
+
+### 📦 Delivery Examples
+
+#### Example 1: Simple Package Delivery
 ```bash
-ros2 launch amr_fleet_adapter amr_fleet_adapter.launch.py
+# Send via ROS2 topic
+ros2 topic pub /delivery_requests std_msgs/String "data: '{
+  \"order_id\": \"PKG001\",
+  \"pickup_location\": \"home\",
+  \"dropoff_location\": \"station_a\",
+  \"cargo_info\": {
+    \"type\": \"package\",
+    \"weight\": 2.5,
+    \"dimensions\": {\"length\": 0.3, \"width\": 0.2, \"height\": 0.15}
+  },
+  \"priority\": \"normal\",
+  \"customer_info\": {
+    \"name\": \"John Doe\",
+    \"phone\": \"+1-555-0123\"
+  }
+}'"
 ```
 
-### Custom Configuration
-
-Launch with custom parameters:
-
+#### Example 2: Urgent Medical Delivery
 ```bash
-ros2 launch amr_fleet_adapter amr_fleet_adapter.launch.py \
-    fleet_name:=my_fleet \
-    robot_names:='["robot1", "robot2", "robot3"]' \
-    map_yaml_file:=/path/to/your/map.yaml
+# High priority medical delivery with special requirements
+ros2 topic pub /delivery_requests std_msgs/String "data: '{
+  \"order_id\": \"MED001\",
+  \"pickup_location\": \"pharmacy\",
+  \"dropoff_location\": \"hospital\",
+  \"cargo_info\": {
+    \"type\": \"medicine\",
+    \"weight\": 0.8,
+    \"temperature_sensitive\": true,
+    \"special_instructions\": \"Keep refrigerated\"
+  },
+  \"priority\": \"urgent\",
+  \"special_requirements\": {
+    \"signature\": true,
+    \"photo_proof\": true,
+    \"max_attempts\": 1
+  }
+}'"
+```
+
+#### Example 3: Fleet Management Commands
+```bash
+# Emergency stop all robots
+ros2 topic pub /fleet_commands std_msgs/String "data: '{\"command\": \"emergency_stop\"}'"
+
+# Resume fleet operations
+ros2 topic pub /fleet_commands std_msgs/String "data: '{\"command\": \"resume\"}'"
+
+# Get current fleet status
+ros2 topic pub /fleet_commands std_msgs/String "data: '{\"command\": \"get_status\"}'"
+
+# Cancel a specific delivery
+ros2 topic pub /fleet_commands std_msgs/String "data: '{
+  \"command\": \"cancel_task\",
+  \"task_id\": \"task-uuid-here\",
+  \"reason\": \"Customer request\"
+}'"
 ```
 
 ### With TurtleBot Simulation

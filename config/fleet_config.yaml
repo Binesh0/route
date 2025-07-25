@@ -1,24 +1,28 @@
 amr_fleet_adapter:
   ros__parameters:
-    fleet_name: "turtlebot_fleet"
+    # Fleet identification
+    fleet_name: "delivery_fleet"
     
-    # Robot names in the fleet
+    # Robot configuration
     robot_names: ["turtlebot1", "turtlebot2"]
     
-    # Navigation graph file (optional - will use route manager if not specified)
-    nav_graph_file: ""
-    
-    # Robot traits file (optional - will use defaults if not specified)
-    robot_traits_file: ""
-    
-    # Route and map configuration
+    # File paths (relative to package share directory)
     route_json_file: "config/routes.json"
     map_yaml_file: "maps/office_map.yaml"
     
     # Fleet capabilities
+    max_concurrent_deliveries: 10
     perform_deliveries: true
     perform_cleaning: false
     accept_patrol_requests: true
+    
+    # Task management
+    auto_assign_tasks: true
+    delivery_timeout_minutes: 120
+    retry_failed_tasks: true
+    
+    # RMF integration
+    enable_rmf_integration: true
     
     # Timeouts
     discovery_timeout: 60.0

@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+"""
+AMR Fleet Adapter Launch File
+
+Launch file for the Python-based AMR Fleet Adapter with delivery capabilities.
+Supports multiple TurtleBots with Nav2 navigation and comprehensive delivery management.
+"""
+
 import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
@@ -15,25 +22,30 @@ def launch_setup(context, *args, **kwargs):
     # Get package directory
     pkg_dir = get_package_share_directory('amr_fleet_adapter')
     
-    # Configuration files
-    fleet_config_file = PathJoinSubstitution([
-        FindPackageShare('amr_fleet_adapter'),
-        'config',
-        LaunchConfiguration('fleet_config_file')
-    ])
-    
-    # Resolve paths to absolute paths for configuration files
+    # Resolve file paths
+    config_file = os.path.join(pkg_dir, 'config', 'fleet_config.yaml')
     route_json_file = os.path.join(pkg_dir, 'config', 'routes.json')
-    map_yaml_file_param = LaunchConfiguration('map_yaml_file').perform(context)
     
-    # Parameters dictionary
+    # Get launch configuration values
+    fleet_name = LaunchConfiguration('fleet_name').perform(context)
+    robot_names = LaunchConfiguration('robot_names').perform(context)
+    map_yaml_file = LaunchConfiguration('map_yaml_file').perform(context)
+    log_level = LaunchConfiguration('log_level').perform(context)
+    
+    # Resolve map file path
+    if map_yaml_file and not os.path.isabs(map_yaml_file):
+        map_yaml_file = os.path.join(pkg_dir, map_yaml_file)
+    
+    # Parameters for the fleet adapter
     fleet_adapter_params = {
-        'fleet_name': LaunchConfiguration('fleet_name'),
-        'robot_names': LaunchConfiguration('robot_names'),
-        'nav_graph_file': LaunchConfiguration('nav_graph_file'),
-        'robot_traits_file': LaunchConfiguration('robot_traits_file'),
+        'fleet_name': fleet_name,
+        'robot_names': eval(robot_names),  # Convert string representation to list
         'route_json_file': route_json_file,
-        'map_yaml_file': map_yaml_file_param,
+        'map_yaml_file': map_yaml_file,
+        'max_concurrent_deliveries': LaunchConfiguration('max_concurrent_deliveries'),
+        'auto_assign_tasks': LaunchConfiguration('auto_assign_tasks'),
+        'delivery_timeout_minutes': LaunchConfiguration('delivery_timeout_minutes'),
+        'enable_rmf_integration': LaunchConfiguration('enable_rmf_integration'),
         'perform_deliveries': LaunchConfiguration('perform_deliveries'),
         'perform_cleaning': LaunchConfiguration('perform_cleaning'),
         'accept_patrol_requests': LaunchConfiguration('accept_patrol_requests'),
@@ -41,29 +53,47 @@ def launch_setup(context, *args, **kwargs):
         'task_capabilities_timeout': LaunchConfiguration('task_capabilities_timeout'),
     }
     
-    # AMR Fleet Adapter Node
+    # Main AMR Fleet Adapter Node
     amr_fleet_adapter_node = Node(
         package='amr_fleet_adapter',
-        executable='amr_fleet_adapter_node',
+        executable='amr_fleet_adapter_node.py',
         name='amr_fleet_adapter',
         output='screen',
         parameters=[fleet_adapter_params],
-        arguments=['--ros-args', '--log-level', LaunchConfiguration('log_level')]
+        arguments=['--ros-args', '--log-level', log_level],
+        emulate_tty=True
     )
     
-    # RMF Schedule Visualizer (optional)
-    rmf_visualizer_node = Node(
-        package='rmf_visualization_schedule',
-        executable='rmf_visualizer_node',
-        name='rmf_schedule_visualizer',
-        output='screen',
-        condition=LaunchConfiguration('use_rmf_visualizer')
-    )
+    nodes_to_launch = [amr_fleet_adapter_node]
     
-    return [
-        amr_fleet_adapter_node,
-        rmf_visualizer_node,
-    ]
+    # Optional: Launch RMF visualizer if requested
+    if LaunchConfiguration('use_rmf_visualizer').perform(context).lower() == 'true':
+        try:
+            rmf_visualizer_node = Node(
+                package='rmf_visualization_schedule',
+                executable='rmf_visualizer_node',
+                name='rmf_schedule_visualizer',
+                output='screen'
+            )
+            nodes_to_launch.append(rmf_visualizer_node)
+        except Exception:
+            # RMF visualizer not available, continue without it
+            pass
+    
+    # Optional: Launch RViz for visualization
+    if LaunchConfiguration('use_rviz').perform(context).lower() == 'true':
+        rviz_config_file = os.path.join(pkg_dir, 'config', 'fleet_visualization.rviz')
+        if os.path.exists(rviz_config_file):
+            rviz_node = Node(
+                package='rviz2',
+                executable='rviz2',
+                name='rviz2',
+                arguments=['-d', rviz_config_file],
+                output='screen'
+            )
+            nodes_to_launch.append(rviz_node)
+    
+    return nodes_to_launch
 
 
 def generate_launch_description():
@@ -73,33 +103,38 @@ def generate_launch_description():
     declared_arguments = [
         DeclareLaunchArgument(
             'fleet_name',
-            default_value='turtlebot_fleet',
+            default_value='delivery_fleet',
             description='Name of the robot fleet'
         ),
         DeclareLaunchArgument(
             'robot_names',
-            default_value='["turtlebot1"]',
-            description='List of robot names in the fleet'
-        ),
-        DeclareLaunchArgument(
-            'fleet_config_file',
-            default_value='fleet_config.yaml',
-            description='Fleet configuration file name'
-        ),
-        DeclareLaunchArgument(
-            'nav_graph_file',
-            default_value='',
-            description='Navigation graph file path (optional)'
-        ),
-        DeclareLaunchArgument(
-            'robot_traits_file',
-            default_value='',
-            description='Robot traits configuration file path (optional)'
+            default_value='["turtlebot1", "turtlebot2"]',
+            description='List of robot names in the fleet (as string representation of Python list)'
         ),
         DeclareLaunchArgument(
             'map_yaml_file',
-            default_value='',
-            description='Map YAML file path'
+            default_value='maps/office_map.yaml',
+            description='Path to map YAML file (relative to package or absolute)'
+        ),
+        DeclareLaunchArgument(
+            'max_concurrent_deliveries',
+            default_value='10',
+            description='Maximum number of concurrent delivery tasks'
+        ),
+        DeclareLaunchArgument(
+            'auto_assign_tasks',
+            default_value='true',
+            description='Whether to automatically assign tasks to available robots'
+        ),
+        DeclareLaunchArgument(
+            'delivery_timeout_minutes',
+            default_value='120',
+            description='Delivery task timeout in minutes'
+        ),
+        DeclareLaunchArgument(
+            'enable_rmf_integration',
+            default_value='true',
+            description='Whether to enable RMF integration'
         ),
         DeclareLaunchArgument(
             'perform_deliveries',
@@ -129,12 +164,17 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'log_level',
             default_value='info',
-            description='Log level for the nodes'
+            description='Log level for the nodes (debug, info, warn, error)'
         ),
         DeclareLaunchArgument(
             'use_rmf_visualizer',
-            default_value='true',
+            default_value='false',
             description='Whether to launch RMF schedule visualizer'
+        ),
+        DeclareLaunchArgument(
+            'use_rviz',
+            default_value='false',
+            description='Whether to launch RViz for visualization'
         ),
     ]
     
