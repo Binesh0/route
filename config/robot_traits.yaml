@@ -1,0 +1,14 @@
+# TurtleBot Robot Traits Configuration
+
+linear:
+  nominal_velocity: 0.5      # m/s
+  nominal_acceleration: 0.75  # m/s^2
+
+angular:
+  nominal_velocity: 1.0      # rad/s
+  nominal_acceleration: 2.0   # rad/s^2
+
+footprint:
+  radius: 0.3               # meters (robot footprint radius)
+
+vicinity: 1.0                # meters (vicinity for conflict detection)

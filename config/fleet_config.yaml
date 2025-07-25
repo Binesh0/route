@@ -1,0 +1,25 @@
+amr_fleet_adapter:
+  ros__parameters:
+    fleet_name: "turtlebot_fleet"
+    
+    # Robot names in the fleet
+    robot_names: ["turtlebot1", "turtlebot2"]
+    
+    # Navigation graph file (optional - will use route manager if not specified)
+    nav_graph_file: ""
+    
+    # Robot traits file (optional - will use defaults if not specified)
+    robot_traits_file: ""
+    
+    # Route and map configuration
+    route_json_file: "config/routes.json"
+    map_yaml_file: "maps/office_map.yaml"
+    
+    # Fleet capabilities
+    perform_deliveries: true
+    perform_cleaning: false
+    accept_patrol_requests: true
+    
+    # Timeouts
+    discovery_timeout: 60.0
+    task_capabilities_timeout: 30.0

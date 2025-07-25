@@ -1,0 +1,164 @@
+{
+  "waypoints": [
+    {
+      "name": "home",
+      "x": 0.0,
+      "y": 0.0,
+      "theta": 0.0,
+      "map_name": "map",
+      "connections": ["station_a", "station_b"]
+    },
+    {
+      "name": "station_a",
+      "x": 5.0,
+      "y": 2.0,
+      "theta": 1.57,
+      "map_name": "map",
+      "connections": ["home", "station_b", "station_c"]
+    },
+    {
+      "name": "station_b",
+      "x": 3.0,
+      "y": -3.0,
+      "theta": 3.14,
+      "map_name": "map",
+      "connections": ["home", "station_a", "station_c"]
+    },
+    {
+      "name": "station_c",
+      "x": 8.0,
+      "y": 5.0,
+      "theta": -1.57,
+      "map_name": "map",
+      "connections": ["station_a", "station_b", "charging_dock"]
+    },
+    {
+      "name": "charging_dock",
+      "x": 10.0,
+      "y": 0.0,
+      "theta": 0.0,
+      "map_name": "map",
+      "connections": ["station_c"]
+    }
+  ],
+  "routes": [
+    {
+      "route_id": "home_to_station_a",
+      "name": "Home to Station A",
+      "description": "Direct route from home base to station A",
+      "start_waypoint": "home",
+      "end_waypoint": "station_a",
+      "waypoints": [
+        {
+          "name": "home",
+          "x": 0.0,
+          "y": 0.0,
+          "theta": 0.0,
+          "map_name": "map",
+          "connections": []
+        },
+        {
+          "name": "station_a",
+          "x": 5.0,
+          "y": 2.0,
+          "theta": 1.57,
+          "map_name": "map",
+          "connections": []
+        }
+      ],
+      "estimated_duration": 12.0
+    },
+    {
+      "route_id": "patrol_circuit",
+      "name": "Patrol Circuit",
+      "description": "Complete patrol circuit through all stations",
+      "start_waypoint": "home",
+      "end_waypoint": "home",
+      "waypoints": [
+        {
+          "name": "home",
+          "x": 0.0,
+          "y": 0.0,
+          "theta": 0.0,
+          "map_name": "map",
+          "connections": []
+        },
+        {
+          "name": "station_a",
+          "x": 5.0,
+          "y": 2.0,
+          "theta": 1.57,
+          "map_name": "map",
+          "connections": []
+        },
+        {
+          "name": "station_c",
+          "x": 8.0,
+          "y": 5.0,
+          "theta": -1.57,
+          "map_name": "map",
+          "connections": []
+        },
+        {
+          "name": "station_b",
+          "x": 3.0,
+          "y": -3.0,
+          "theta": 3.14,
+          "map_name": "map",
+          "connections": []
+        },
+        {
+          "name": "home",
+          "x": 0.0,
+          "y": 0.0,
+          "theta": 0.0,
+          "map_name": "map",
+          "connections": []
+        }
+      ],
+      "estimated_duration": 60.0
+    },
+    {
+      "route_id": "charging_route",
+      "name": "Go to Charging Dock",
+      "description": "Route to charging dock via station C",
+      "start_waypoint": "home",
+      "end_waypoint": "charging_dock",
+      "waypoints": [
+        {
+          "name": "home",
+          "x": 0.0,
+          "y": 0.0,
+          "theta": 0.0,
+          "map_name": "map",
+          "connections": []
+        },
+        {
+          "name": "station_a",
+          "x": 5.0,
+          "y": 2.0,
+          "theta": 1.57,
+          "map_name": "map",
+          "connections": []
+        },
+        {
+          "name": "station_c",
+          "x": 8.0,
+          "y": 5.0,
+          "theta": -1.57,
+          "map_name": "map",
+          "connections": []
+        },
+        {
+          "name": "charging_dock",
+          "x": 10.0,
+          "y": 0.0,
+          "theta": 0.0,
+          "map_name": "map",
+          "connections": []
+        }
+      ],
+      "estimated_duration": 45.0
+    }
+  ]
+}
